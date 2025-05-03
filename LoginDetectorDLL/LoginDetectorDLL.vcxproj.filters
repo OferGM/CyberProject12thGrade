@@ -15,69 +15,69 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\ContourBasedPasswordDetector.cpp">
+    <ClCompile Include="ContourBasedPasswordDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\dllmain.cpp">
+    <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\KeywordBasedFieldDetector.cpp">
+    <ClCompile Include="KeywordBasedFieldDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\KeywordBasedLoginDetector.cpp">
+    <ClCompile Include="KeywordBasedLoginDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\LoginDetectorDLL.cpp">
+    <ClCompile Include="LoginDetectorDLL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\LoginPageDetector.cpp">
+    <ClCompile Include="LoginPageDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\OpenCVImageProcessor.cpp">
+    <ClCompile Include="OpenCVImageProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\TesseractOcrService.cpp">
+    <ClCompile Include="TesseractOcrService.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\ContourBasedPasswordDetector.h">
+    <ClInclude Include="ContourBasedPasswordDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\FormField.h">
+    <ClInclude Include="FormField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\IFieldDetector.h">
+    <ClInclude Include="IFieldDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\IImageProcessor.h">
+    <ClInclude Include="IImageProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\ILoginDetector.h">
+    <ClInclude Include="ILoginDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\IOcrService.h">
+    <ClInclude Include="IOcrService.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\IPasswordFieldDetector.h">
+    <ClInclude Include="IPasswordFieldDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\KeywordBasedFieldDetector.h">
+    <ClInclude Include="KeywordBasedFieldDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\KeywordBasedLoginDetector.h">
+    <ClInclude Include="KeywordBasedLoginDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\LoginDetectorDLL.h">
+    <ClInclude Include="LoginDetectorDLL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\LoginPageDetector.h">
+    <ClInclude Include="LoginPageDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\OpenCVImageProcessor.h">
+    <ClInclude Include="OpenCVImageProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\TesseractOcrService.h">
+    <ClInclude Include="TesseractOcrService.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

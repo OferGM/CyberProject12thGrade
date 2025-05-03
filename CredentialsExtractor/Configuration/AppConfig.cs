@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Update the AppConfig.cs file in the Configuration folder
+using System;
 using System.IO;
 
 namespace CredentialsExtractor.Configuration
@@ -14,14 +15,15 @@ namespace CredentialsExtractor.Configuration
         public string LogFilePath { get; set; }
         public string ScreenshotDirectory { get; set; }
         public TimeSpan MaxCaptureDuration { get; set; }
-        public string LoginDetectorPath { get; set; }
+        public string LoginDetectorDllPath { get; set; }
 
         // Default constructor with sensible defaults
         public AppConfig()
         {
             LogFilePath = Path.Combine(Path.GetTempPath(), "LoginMonitor", "keylog.txt");
             ScreenshotDirectory = Path.Combine(Path.GetTempPath(), "LoginMonitor", "Screenshots");
-            LoginDetectorPath = @"M:\Dev\C\Microsoft Visual Studio\Project\S.P.Y\S.P.Y\x64\Release\LoginDetector.exe";
+            MaxCaptureDuration = TimeSpan.FromMinutes(60); // Default to 1 hour
+            LoginDetectorDllPath = @"M:\Dev\C\Microsoft Visual Studio\CyberProject\x64\Release\LoginDetectorDLL.dll";
         }
     }
 

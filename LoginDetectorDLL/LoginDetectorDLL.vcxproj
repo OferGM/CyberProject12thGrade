@@ -144,29 +144,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\ContourBasedPasswordDetector.cpp" />
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\dllmain.cpp" />
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\KeywordBasedFieldDetector.cpp" />
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\KeywordBasedLoginDetector.cpp" />
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\LoginDetectorDLL.cpp" />
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\LoginPageDetector.cpp" />
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\OpenCVImageProcessor.cpp" />
-    <ClCompile Include="..\..\CyberProject4\LoginDetectorDLL\TesseractOcrService.cpp" />
+    <ClCompile Include="ContourBasedPasswordDetector.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="KeywordBasedFieldDetector.cpp" />
+    <ClCompile Include="KeywordBasedLoginDetector.cpp" />
+    <ClCompile Include="LoginDetectorDLL.cpp" />
+    <ClCompile Include="LoginPageDetector.cpp" />
+    <ClCompile Include="OpenCVImageProcessor.cpp" />
+    <ClCompile Include="TesseractOcrService.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\ContourBasedPasswordDetector.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\FormField.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\IFieldDetector.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\IImageProcessor.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\ILoginDetector.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\IOcrService.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\IPasswordFieldDetector.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\KeywordBasedFieldDetector.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\KeywordBasedLoginDetector.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\LoginDetectorDLL.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\LoginPageDetector.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\OpenCVImageProcessor.h" />
-    <ClInclude Include="..\..\CyberProject4\LoginDetectorDLL\TesseractOcrService.h" />
+    <ClInclude Include="ContourBasedPasswordDetector.h" />
+    <ClInclude Include="FormField.h" />
+    <ClInclude Include="IFieldDetector.h" />
+    <ClInclude Include="IImageProcessor.h" />
+    <ClInclude Include="ILoginDetector.h" />
+    <ClInclude Include="IOcrService.h" />
+    <ClInclude Include="IPasswordFieldDetector.h" />
+    <ClInclude Include="KeywordBasedFieldDetector.h" />
+    <ClInclude Include="KeywordBasedLoginDetector.h" />
+    <ClInclude Include="LoginDetectorDLL.h" />
+    <ClInclude Include="LoginPageDetector.h" />
+    <ClInclude Include="OpenCVImageProcessor.h" />
+    <ClInclude Include="TesseractOcrService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

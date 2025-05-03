@@ -8,6 +8,6 @@
         string LogFilePath { get; }
         string ScreenshotDirectory { get; }
         System.TimeSpan MaxCaptureDuration { get; }
-        string LoginDetectorPath { get; }
+        string LoginDetectorDllPath { get; }
     }
 }

