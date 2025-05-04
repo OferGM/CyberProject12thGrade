@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿// KeyboardUtils.cs
 using CredentialsExtractor.Native;
 
 namespace CredentialsExtractor.Input

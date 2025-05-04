@@ -1,4 +1,5 @@
-﻿namespace CredentialsExtractor.Core
+﻿// ILoginMonitor.cs
+namespace CredentialsExtractor.Core
 {
     public interface ILoginMonitor : System.IDisposable
     {

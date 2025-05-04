@@ -11,6 +11,7 @@ private:
     std::vector<std::string> phoneKeywords;
     std::vector<std::string> nameKeywords;
     std::vector<std::string> passwordKeywords;
+    std::vector<std::string> creditKeywords;
     std::vector<std::string> excludeKeywords;
     std::vector<std::string> allKeywords;
 

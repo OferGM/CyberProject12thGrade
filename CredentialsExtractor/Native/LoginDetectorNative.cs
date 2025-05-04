@@ -1,7 +1,5 @@
-﻿using System;
-using System.IO;
+﻿// LoginDetectorNative.cs
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
 
 namespace CredentialsExtractor.Native
 {
@@ -26,7 +24,7 @@ namespace CredentialsExtractor.Native
         public bool IsLoginPage;
         public double Confidence;
 
-        // These fields will be marshaled separately since they're vectors in C++
+        // Arrays represented as pointer + count
         public IntPtr Fields;     // Pointer to DetectedField array
         public int FieldCount;    // Number of fields
 
@@ -123,10 +121,13 @@ namespace CredentialsExtractor.Native
             }
         }
 
-        public static IntPtr DetectLoginPage(string imagePath, double confidenceThreshold = 0.6)
+        public static IntPtr DetectLoginPage(string imagePath, double confidenceThreshold = 0.4)
         {
             if (_detectLoginPage == null)
                 throw new InvalidOperationException("LoginDetector DLL not initialized");
+
+            if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
+                throw new FileNotFoundException($"Image file not found: {imagePath}");
 
             return _detectLoginPage(imagePath, confidenceThreshold);
         }
@@ -136,7 +137,8 @@ namespace CredentialsExtractor.Native
             if (_freeDetectionResult == null)
                 throw new InvalidOperationException("LoginDetector DLL not initialized");
 
-            _freeDetectionResult(result);
+            if (result != IntPtr.Zero)
+                _freeDetectionResult(result);
         }
 
         // Helper method to safely extract detection result
@@ -147,8 +149,6 @@ namespace CredentialsExtractor.Native
 
             // Marshal the base structure
             DetectionResult result = Marshal.PtrToStructure<DetectionResult>(resultPtr);
-
-            // Return the result
             return result;
         }
 
@@ -156,13 +156,18 @@ namespace CredentialsExtractor.Native
         public static List<DetectedField> ExtractFields(IntPtr fieldsPtr, int fieldCount)
         {
             var fields = new List<DetectedField>();
+            if (fieldsPtr == IntPtr.Zero || fieldCount <= 0)
+                return fields;
 
             // Calculate size of each field structure for pointer arithmetic
             int structSize = Marshal.SizeOf<DetectedField>();
 
             for (int i = 0; i < fieldCount; i++)
             {
+                // Calculate offset for current field
                 IntPtr currentFieldPtr = IntPtr.Add(fieldsPtr, i * structSize);
+
+                // Marshal the structure
                 DetectedField field = Marshal.PtrToStructure<DetectedField>(currentFieldPtr);
                 fields.Add(field);
             }
@@ -174,13 +179,21 @@ namespace CredentialsExtractor.Native
         public static List<string> ExtractErrors(IntPtr errorsPtr, int errorCount)
         {
             var errors = new List<string>();
+            if (errorsPtr == IntPtr.Zero || errorCount <= 0)
+                return errors;
 
-            // Assume errors are stored as an array of char pointers
+            // The errors are stored as an array of char pointers (const char**)
             for (int i = 0; i < errorCount; i++)
             {
+                // Get the pointer to the string
                 IntPtr strPtr = Marshal.ReadIntPtr(errorsPtr, i * IntPtr.Size);
-                string error = Marshal.PtrToStringAnsi(strPtr);
-                errors.Add(error);
+                if (strPtr != IntPtr.Zero)
+                {
+                    // Convert to C# string
+                    string error = Marshal.PtrToStringAnsi(strPtr);
+                    if (!string.IsNullOrEmpty(error))
+                        errors.Add(error);
+                }
             }
 
             return errors;

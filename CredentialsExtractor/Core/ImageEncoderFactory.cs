@@ -1,4 +1,5 @@
-﻿using System.Drawing.Imaging;
+﻿//ImageEncoderFactory.cs
+using System.Drawing.Imaging;
 
 namespace CredentialsExtractor.Core
 {

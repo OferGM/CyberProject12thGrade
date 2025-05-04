@@ -1,4 +1,5 @@
-﻿namespace CredentialsExtractor.Input
+﻿//IKeyboardUtils.cs
+namespace CredentialsExtractor.Input
 {
     public interface IKeyboardUtils
     {

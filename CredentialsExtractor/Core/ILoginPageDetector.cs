@@ -1,4 +1,5 @@
-﻿namespace CredentialsExtractor.Core
+﻿// ILoginPageDetector.cs
+namespace CredentialsExtractor.Core
 {
     public interface ILoginPageDetector
     {

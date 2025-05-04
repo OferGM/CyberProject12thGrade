@@ -22,6 +22,8 @@ KeywordBasedLoginDetector::KeywordBasedLoginDetector() {
         // Form and field related terms
         "required", "required field", "remember this device", "keep me signed in",
         "stay signed in", "keep me logged in", "not your computer", "guest mode"
+        // credits related terms
+        "card number", "expiration date", "security code", "payment method"
     };
 
     strongKeywords = {

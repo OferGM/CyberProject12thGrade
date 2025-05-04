@@ -1,4 +1,5 @@
-﻿namespace CredentialsExtractor.Configuration
+﻿// IAppConfig.cs
+namespace CredentialsExtractor.Configuration
 {
     public interface IAppConfig
     {

@@ -1,4 +1,5 @@
-﻿using System.Drawing.Imaging;
+﻿// JpegEncoder.cs
+using System.Drawing.Imaging;
 using System.Drawing;
 
 namespace CredentialsExtractor.Core

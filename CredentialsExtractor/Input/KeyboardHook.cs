@@ -1,6 +1,5 @@
-﻿using System;
+﻿// KeyboardHook.cs
 using System.Runtime.InteropServices;
-using System.Threading;
 using CredentialsExtractor.Logging;
 using CredentialsExtractor.Native;
 

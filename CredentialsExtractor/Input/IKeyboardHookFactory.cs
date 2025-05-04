@@ -1,4 +1,5 @@
-﻿namespace CredentialsExtractor.Input
+﻿//IKeyboardHookFactory.cs
+namespace CredentialsExtractor.Input
 {
     public interface IKeyboardHookFactory
     {

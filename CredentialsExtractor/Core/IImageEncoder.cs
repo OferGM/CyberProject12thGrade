@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-
+﻿//IImageEncoder.cs
+using System.Drawing;
 
 namespace CredentialsExtractor.Core
 {

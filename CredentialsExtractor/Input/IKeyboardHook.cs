@@ -1,4 +1,5 @@
-﻿namespace CredentialsExtractor.Input
+﻿// IKeyboardHook.cs
+namespace CredentialsExtractor.Input
 {
     public interface IKeyboardHook : System.IDisposable
     {

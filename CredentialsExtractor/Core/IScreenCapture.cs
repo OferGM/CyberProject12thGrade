@@ -1,4 +1,5 @@
-﻿namespace CredentialsExtractor.Core
+﻿//IScreenCapture.cs
+namespace CredentialsExtractor.Core
 {
     public interface IScreenCapture
     {

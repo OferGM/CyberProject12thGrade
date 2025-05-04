@@ -9,7 +9,15 @@
 #include "IOcrService.h"
 #include <opencv2/core/mat.hpp>
 #include <memory>
-#include "LoginDetectorDLL.h" // Include the DLL interface
+
+// Internal detection result structure (distinct from DLL interface)
+struct InternalDetectionResult {
+    bool isLoginPage;
+    double confidence;
+    std::vector<FormField> fields;
+    std::vector<std::string> errors;
+    double executionTimeMs;
+};
 
 class LoginPageDetector {
 private:
@@ -20,7 +28,7 @@ private:
     double confidenceThreshold;
 
 public:
-    LoginPageDetector(double threshold = 0.6);
+    LoginPageDetector(double threshold = 0.4);
     ~LoginPageDetector();
 
     std::vector<FormField> detectFormFields(const cv::Mat& image);
@@ -28,5 +36,5 @@ public:
     bool isLoginPage(const cv::Mat& image, const std::vector<FormField>& fields,
         std::map<std::string, double>& confidenceFactors, double& confidence);
 
-    DetectionResult processAndAnalyze(const std::string& imagePath);
+    InternalDetectionResult processAndAnalyze(const std::string& imagePath);
 };

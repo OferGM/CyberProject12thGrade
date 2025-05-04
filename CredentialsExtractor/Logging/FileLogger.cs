@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿// FileLogger.cs
 
 namespace CredentialsExtractor.Logging
 {

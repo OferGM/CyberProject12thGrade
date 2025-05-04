@@ -1,4 +1,5 @@
-﻿namespace CredentialsExtractor.Logging
+﻿// ILoggerFactory.cs
+namespace CredentialsExtractor.Logging
 {
     public interface ILoggerFactory
     {

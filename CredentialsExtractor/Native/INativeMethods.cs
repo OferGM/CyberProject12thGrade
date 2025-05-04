@@ -1,4 +1,4 @@
-﻿using System;
+﻿// NativeMethods
 using System.Runtime.InteropServices;
 
 namespace CredentialsExtractor.Native

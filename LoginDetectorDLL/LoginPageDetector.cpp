@@ -80,13 +80,20 @@ std::vector<FormField> LoginPageDetector::detectFormFields(const cv::Mat& image)
                 continue;
             }
 
-            // Extract the region around the rectangle for OCR
-            cv::Rect roiRect(
-                std::max(0, rect.x - 50),
-                std::max(0, rect.y - 30),
-                std::min(gray.cols - std::max(0, rect.x - 50), rect.width + 100),
-                std::min(gray.rows - std::max(0, rect.y - 30), rect.height + 40)
-            );
+            int roi_x = std::max(0, rect.x - 50);
+            int roi_y = std::max(0, rect.y - 30);
+            int roi_width = std::min(gray.cols - roi_x, rect.width + 100);
+            int roi_height = std::min(gray.rows - roi_y, rect.height + 40);
+
+
+            // Add additional validation before creating the ROI rectangle
+            if (roi_width <= 0 || roi_height <= 0) {
+                // Skip this contour if creating a valid ROI is impossible
+                continue;
+            }
+
+            // Create ROI rectangle with validated dimensions
+            cv::Rect roiRect(roi_x, roi_y, roi_width, roi_height);
 
             // Ensure the ROI is within image bounds
             if (roiRect.width > 0 && roiRect.height > 0) {
@@ -141,8 +148,8 @@ bool LoginPageDetector::isLoginPage(const cv::Mat& image, const std::vector<Form
     return (confidence >= confidenceThreshold);
 }
 
-DetectionResult LoginPageDetector::processAndAnalyze(const std::string& imagePath) {
-    DetectionResult result;
+InternalDetectionResult LoginPageDetector::processAndAnalyze(const std::string& imagePath) {
+    InternalDetectionResult result;
     result.isLoginPage = false;
     result.confidence = 0.0;
 
@@ -167,19 +174,7 @@ DetectionResult LoginPageDetector::processAndAnalyze(const std::string& imagePat
         // Fill the result
         result.isLoginPage = isLoginPage;
         result.confidence = confidence;
-
-        // Convert FormField objects to DetectedField objects
-        for (const auto& field : formFields) {
-            DetectedField detectedField;
-            detectedField.type = field.type;
-            detectedField.x = field.position.x;
-            detectedField.y = field.position.y;
-            detectedField.width = field.position.width;
-            detectedField.height = field.position.height;
-            detectedField.content = field.text;
-
-            result.fields.push_back(detectedField);
-        }
+        result.fields = formFields;
     }
     catch (const std::exception& e) {
         result.errors.push_back(std::string("Exception: ") + e.what());

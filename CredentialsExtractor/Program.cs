@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿// Program.cs
 using CredentialsExtractor.Configuration;
 using CredentialsExtractor.Core;
 using CredentialsExtractor.Logging;

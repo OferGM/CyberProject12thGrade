@@ -9,6 +9,7 @@ KeywordBasedFieldDetector::KeywordBasedFieldDetector() {
     phoneKeywords = { "phone", "mobile", "cell", "telephone", "mobile phone number" };
     nameKeywords = { "name", "first name", "last name", "full name" };
     passwordKeywords = { "password", "pass", "pwd", "passcode" };
+    creditKeywords = {"card number", "expiration date", "security code", "payment method"};
 
     // Keywords that indicate elements I want to exclude (not actual input fields)
     excludeKeywords = {

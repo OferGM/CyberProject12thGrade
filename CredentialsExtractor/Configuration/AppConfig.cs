@@ -1,6 +1,4 @@
-﻿// Update the AppConfig.cs file in the Configuration folder
-using System;
-using System.IO;
+﻿// AppConfig.cs
 
 namespace CredentialsExtractor.Configuration
 {
