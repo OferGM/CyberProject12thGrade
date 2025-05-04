@@ -1,0 +1,132 @@
+import socket
+import threading
+import json
+import logging
+from interfaces.connection_handler import IConnectionHandler
+from interfaces.credential_processor import ICredentialProcessor
+
+logger = logging.getLogger("CredentialServer")
+
+class SocketConnectionHandler(IConnectionHandler):
+    """Socket-based implementation of IConnectionHandler"""
+    
+    def __init__(self, host: str, port: int, processor: ICredentialProcessor):
+        """Initialize with host, port, and credential processor"""
+        self.host = host
+        self.port = port
+        self.processor = processor
+        self.server_socket = None
+        self.running = False
+        self.threads = []
+    
+    def start(self):
+        """Start listening for connections"""
+        print(f"Creating socket...")
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print(f"Setting socket options...")
+        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        
+        try:
+            print(f"Binding to {self.host}:{self.port}...")
+            self.server_socket.bind((self.host, self.port))
+            print(f"Starting to listen...")
+            self.server_socket.listen(1)
+            print(f"Server successfully listening on {self.host}:{self.port}")
+            self.running = True
+            
+            logger.info(f"Server started, listening on {self.host}:{self.port}")
+            
+            while self.running:
+                try:
+                    client_socket, client_address = self.server_socket.accept()
+                    client_thread = threading.Thread(
+                        target=self.handle_client,
+                        args=(client_socket, client_address)
+                    )
+                    client_thread.daemon = True
+                    client_thread.start()
+                    self.threads.append(client_thread)
+                    
+                    logger.info(f"Accepted connection from {client_address[0]}:{client_address[1]}")
+                except Exception as e:
+                    if self.running:  # Only log if we're still supposed to be running
+                        logger.error(f"Error accepting connection: {e}")
+        
+        except Exception as e:
+            logger.error(f"Error starting server: {e}")
+        finally:
+            self.stop()
+    
+    def stop(self):
+        """Stop listening for connections"""
+        self.running = False
+        
+        if self.server_socket:
+            try:
+                self.server_socket.close()
+            except Exception as e:
+                logger.error(f"Error closing server socket: {e}")
+        
+        # Wait for client threads to finish
+        for thread in self.threads:
+            if thread.is_alive():
+                thread.join(timeout=1.0)
+        
+        logger.info("Server stopped")
+    
+    def handle_client(self, client_socket, client_address):
+        """Handle an individual client connection"""
+        try:
+            # Receive data
+            buffer = b""
+            while True:
+                chunk = client_socket.recv(4096)
+                if not chunk:
+                    break
+                buffer += chunk
+                
+                # Check if we have a complete message (look for end marker)
+                if buffer.endswith(b"<END>"):
+                    buffer = buffer[:-5]  # Remove the end marker
+                    break
+            
+            # Process the received data
+            if buffer:
+                try:
+                    data_str = buffer.decode('utf-8')
+                    data = json.loads(data_str)
+                    
+                    # Process and store the credentials
+                    result = self.processor.process_credentials(data)
+                    
+                    # Send acknowledgment back to the client
+                    response = {
+                        "status": "success",
+                        "message": "Credentials received and stored successfully",
+                        "document_id": result.get("document_id", "")
+                    }
+                    client_socket.sendall(json.dumps(response).encode('utf-8'))
+                    
+                    logger.info(f"Successfully processed credentials from {client_address[0]}:{client_address[1]}")
+                
+                except json.JSONDecodeError as e:
+                    logger.error(f"Invalid JSON received from {client_address[0]}:{client_address[1]}: {e}")
+                    error_response = {
+                        "status": "error",
+                        "message": "Invalid JSON format"
+                    }
+                    client_socket.sendall(json.dumps(error_response).encode('utf-8'))
+                
+                except Exception as e:
+                    logger.error(f"Error processing data from {client_address[0]}:{client_address[1]}: {e}")
+                    error_response = {
+                        "status": "error",
+                        "message": "Error processing credentials"
+                    }
+                    client_socket.sendall(json.dumps(error_response).encode('utf-8'))
+        
+        except Exception as e:
+            logger.error(f"Error handling client {client_address[0]}:{client_address[1]}: {e}")
+        
+        finally:
+            client_socket.close()

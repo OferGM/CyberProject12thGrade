@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LoginDetectorDLL", "LoginDetectorDLL\LoginDetectorDLL.vcxproj", "{5C465E69-437E-4C02-A7A1-096DA35D5B92}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CredentialsExtractor", "CredentialsExtractor\CredentialsExtractor.csproj", "{97486060-E96F-4005-A796-2363333B442C}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CredentialServer", "CredentialServer\CredentialServer.pyproj", "{455ABAD7-C9BB-4718-BF3B-A051F8B757D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,12 @@ Global
 		{97486060-E96F-4005-A796-2363333B442C}.Release|x64.Build.0 = Release|Any CPU
 		{97486060-E96F-4005-A796-2363333B442C}.Release|x86.ActiveCfg = Release|Any CPU
 		{97486060-E96F-4005-A796-2363333B442C}.Release|x86.Build.0 = Release|Any CPU
+		{455ABAD7-C9BB-4718-BF3B-A051F8B757D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{455ABAD7-C9BB-4718-BF3B-A051F8B757D5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{455ABAD7-C9BB-4718-BF3B-A051F8B757D5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{455ABAD7-C9BB-4718-BF3B-A051F8B757D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{455ABAD7-C9BB-4718-BF3B-A051F8B757D5}.Release|x64.ActiveCfg = Release|Any CPU
+		{455ABAD7-C9BB-4718-BF3B-A051F8B757D5}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

