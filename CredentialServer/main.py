@@ -1,9 +1,11 @@
 import logging
+import sys
+import traceback
 from server import CredentialServer
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,  # Change from INFO to DEBUG
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler('credential_server.log'),
@@ -14,19 +16,31 @@ logger = logging.getLogger("CredentialServer")
 
 def main():
     """Main entry point"""
-    print("Starting Credential Server...")
-    
-    server = CredentialServer()
+    logger.info("Starting Credential Server...")
     
     try:
-        print("About to call server.start()...")
+        # Load configuration and initialize server
+        logger.debug("Initializing server with configuration")
+        server = CredentialServer()
+        
+        # Start the server
+        logger.debug("About to call server.start()")
         server.start()
-        print("Server.start() called successfully")
+        
     except KeyboardInterrupt:
-        print("Server interrupted. Shutting down...")
+        logger.info("Server interrupted. Shutting down...")
+    except Exception as e:
+        logger.error(f"Unhandled exception: {e}")
+        logger.error(traceback.format_exc())
+        print(f"ERROR: {e}")
+        print("Check the log file for more details.")
+        sys.exit(1)
     finally:
-        server.stop()
-        print("Server stopped.")
+        try:
+            server.stop()
+            logger.info("Server stopped.")
+        except Exception as e:
+            logger.error(f"Error stopping server: {e}")
 
 
 if __name__ == "__main__":

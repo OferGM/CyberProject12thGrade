@@ -34,7 +34,7 @@ extern "C" {
     };
 
     // Main function to detect login page in an image
-    LOGINDETECTOR_API DetectionResult* DetectLoginPage(const char* imagePath, double confidenceThreshold);
+    LOGINDETECTOR_API DetectionResult* DetectLoginPage(const char* imagePath, double confidenceThreshold = 0.6);
 
     // Free the detection result memory (must be called after processing the result)
     LOGINDETECTOR_API void FreeDetectionResult(DetectionResult* result);

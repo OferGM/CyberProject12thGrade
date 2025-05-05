@@ -35,7 +35,7 @@ namespace CredentialsExtractor.DependencyInjection
                 GetService<ILogger>(),
                 GetService<IKeyboardManager>(),
                 GetService<IApplicationIdentifier>(),
-                0.4));
+                0.6));
 
             // Register monitor
             RegisterService<ILoginMonitor>(new LoginMonitor(

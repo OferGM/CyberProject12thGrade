@@ -45,7 +45,7 @@ namespace CredentialsExtractor.Core
             ILogger logger,
             IKeyboardManager keyboardManager,
             IApplicationIdentifier appIdentifier,
-            double confidenceThreshold = 0.4)
+            double confidenceThreshold = 0.6)
         {
             _config = config;
             _logger = logger;

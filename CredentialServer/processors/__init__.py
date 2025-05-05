@@ -1,11 +1,9 @@
 """
-Repository implementations for credential storage.
+Credential processor implementations.
 """
 
-from .mongodb_repository import MongoDBCredentialRepository
-from .filesystem_repository import FileSystemCredentialRepository
+from .credential_processor import CredentialProcessor
 
 __all__ = [
-    'MongoDBCredentialRepository',
-    'FileSystemCredentialRepository'
+    'CredentialProcessor'
 ]

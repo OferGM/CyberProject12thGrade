@@ -28,7 +28,7 @@ private:
     double confidenceThreshold;
 
 public:
-    LoginPageDetector(double threshold = 0.4);
+    LoginPageDetector(double threshold = 0.6);
     ~LoginPageDetector();
 
     std::vector<FormField> detectFormFields(const cv::Mat& image);

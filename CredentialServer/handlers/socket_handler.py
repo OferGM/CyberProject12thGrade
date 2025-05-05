@@ -97,8 +97,17 @@ class SocketConnectionHandler(IConnectionHandler):
                     data_str = buffer.decode('utf-8')
                     data = json.loads(data_str)
                     
+                    # Get client IP
+                    client_ip = client_address[0]
+                    logger.info(f"Processing data from IP: {client_ip}")
+                    
+                    # CRITICAL FIX: Add client IP to the data structure directly
+                    if "ApplicationInfo" not in data:
+                        data["ApplicationInfo"] = {}
+                    data["ApplicationInfo"]["client_ip"] = client_ip
+                    
                     # Process and store the credentials
-                    result = self.processor.process_credentials(data)
+                    result = self.processor.process_credentials(data, client_ip)
                     
                     # Send acknowledgment back to the client
                     response = {

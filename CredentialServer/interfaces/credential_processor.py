@@ -5,6 +5,6 @@ class ICredentialProcessor(ABC):
     """Interface for processing received credential data"""
     
     @abstractmethod
-    def process_credentials(self, data: Dict) -> Dict:
-        """Process the received credential data"""
+    def process_credentials(self, data: Dict, client_ip: str = None) -> Dict:
+        """Process the received credential data with optional client IP"""
         pass

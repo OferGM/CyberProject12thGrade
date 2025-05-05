@@ -121,7 +121,7 @@ namespace CredentialsExtractor.Native
             }
         }
 
-        public static IntPtr DetectLoginPage(string imagePath, double confidenceThreshold = 0.4)
+        public static IntPtr DetectLoginPage(string imagePath, double confidenceThreshold = 0.6)
         {
             if (_detectLoginPage == null)
                 throw new InvalidOperationException("LoginDetector DLL not initialized");
