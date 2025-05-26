@@ -8,7 +8,5 @@ namespace CredentialsExtractor.Configuration
         int ScreenshotHeight { get; }
         string LogFilePath { get; }
         string ScreenshotDirectory { get; }
-        System.TimeSpan MaxCaptureDuration { get; }
-        string LoginDetectorDllPath { get; }
     }
 }

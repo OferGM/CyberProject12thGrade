@@ -25,7 +25,6 @@ namespace LoginDetectorMonitor
 
                 Console.WriteLine($"Starting Login Detector Monitor...");
                 Console.WriteLine($"Log file: {config.LogFilePath}");
-                Console.WriteLine($"Monitoring duration: {config.MaxCaptureDuration} minutes");
 
                 // Create service provider with all dependencies
                 ServiceProvider serviceProvider = new ServiceProvider(config, logger);
