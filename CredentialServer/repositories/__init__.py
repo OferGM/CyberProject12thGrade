@@ -1,3 +1,5 @@
+"""__init__.py"""
+
 """
 Repository implementations for credential storage.
 """

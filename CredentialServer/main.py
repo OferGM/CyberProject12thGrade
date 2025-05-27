@@ -1,3 +1,4 @@
+"""main.py"""
 import logging
 import sys
 import traceback

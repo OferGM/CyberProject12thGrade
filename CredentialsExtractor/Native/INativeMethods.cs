@@ -1,4 +1,4 @@
-﻿// NativeMethods
+﻿// INativeMethods.cs
 using System.Runtime.InteropServices;
 
 namespace CredentialsExtractor.Native

@@ -1,13 +1,16 @@
+"""server.py"""
 import logging
 from interfaces.document_namer import IDocumentNamer
 from interfaces.credential_repository import ICredentialRepository
 from interfaces.credential_processor import ICredentialProcessor
 from interfaces.connection_handler import IConnectionHandler
+from interfaces.cryptography_service import ICryptographyService
 from namers.timestamp_namer import TimestampDocumentNamer
 from repositories.mongodb_repository import MongoDBCredentialRepository
 from repositories.filesystem_repository import FileSystemCredentialRepository
 from processors.credential_processor import CredentialProcessor
 from handlers.socket_handler import SocketConnectionHandler
+from cryptography.aes_cryptography_service import AESCryptographyService
 from config.server_config import load_config
 
 logger = logging.getLogger("CredentialServer")
@@ -15,11 +18,12 @@ logger = logging.getLogger("CredentialServer")
 class CredentialServer:
     """Main server class that coordinates all components"""
     
-    def __init__(self, config_file: str = "server_config.ini"):
-        """Initialize the server with configuration"""
-        logger.info("Initializing CredentialServer")
+    def __init__(self, config_file: str = "server_config.ini", cryptography_service: ICryptographyService = None):
+        """Initialize the server with configuration and optional cryptography service"""
+        logger.info("Initializing CredentialServer with encryption support")
         self.config = load_config(config_file)
         self.document_namer = TimestampDocumentNamer()
+        self.cryptography_service = cryptography_service or AESCryptographyService()
         
         # Set up repository
         storage_type = self.config.get("Storage", "type").lower()
@@ -68,16 +72,19 @@ class CredentialServer:
         # Set up processor
         self.processor = CredentialProcessor(self.repository)
         
-        # Set up connection handler
+        # Set up connection handler with cryptography service
         self.connection_handler = SocketConnectionHandler(
             self.config.get("Server", "host"),
             int(self.config.get("Server", "port")),
-            self.processor
+            self.processor,
+            self.cryptography_service
         )
+        
+        logger.info("Server initialized with end-to-end encryption enabled")
     
     def start(self):
         """Start the server"""
-        logger.info("Starting Credential Server...")
+        logger.info("Starting Credential Server with encryption...")
         self.connection_handler.start()
     
     def stop(self):

@@ -1,20 +1,25 @@
+"""socket_handler.py"""
 import socket
 import threading
 import json
 import logging
 from interfaces.connection_handler import IConnectionHandler
 from interfaces.credential_processor import ICredentialProcessor
+from interfaces.cryptography_service import ICryptographyService
+from cryptography.aes_cryptography_service import AESCryptographyService
 
 logger = logging.getLogger("CredentialServer")
 
 class SocketConnectionHandler(IConnectionHandler):
-    """Socket-based implementation of IConnectionHandler"""
+    """Socket-based implementation of IConnectionHandler with encryption support"""
     
-    def __init__(self, host: str, port: int, processor: ICredentialProcessor):
-        """Initialize with host, port, and credential processor"""
+    def __init__(self, host: str, port: int, processor: ICredentialProcessor, 
+                 cryptography_service: ICryptographyService = None):
+        """Initialize with host, port, credential processor, and optional crypto service"""
         self.host = host
         self.port = port
         self.processor = processor
+        self.cryptography_service = cryptography_service or AESCryptographyService()
         self.server_socket = None
         self.running = False
         self.threads = []
@@ -34,7 +39,7 @@ class SocketConnectionHandler(IConnectionHandler):
             print(f"Server successfully listening on {self.host}:{self.port}")
             self.running = True
             
-            logger.info(f"Server started, listening on {self.host}:{self.port}")
+            logger.info(f"Server started with encryption support, listening on {self.host}:{self.port}")
             
             while self.running:
                 try:
@@ -76,7 +81,7 @@ class SocketConnectionHandler(IConnectionHandler):
         logger.info("Server stopped")
     
     def handle_client(self, client_socket, client_address):
-        """Handle an individual client connection"""
+        """Handle an individual client connection with encryption support"""
         try:
             # Receive data
             buffer = b""
@@ -95,13 +100,27 @@ class SocketConnectionHandler(IConnectionHandler):
             if buffer:
                 try:
                     data_str = buffer.decode('utf-8')
-                    data = json.loads(data_str)
+                    received_data = json.loads(data_str)
+                    
+                    # Check if data is encrypted
+                    if isinstance(received_data, dict) and received_data.get("encrypted") == True:
+                        logger.info("Received encrypted data, decrypting...")
+                        encrypted_content = received_data.get("data", "")
+                        
+                        # Decrypt the data
+                        decrypted_json = self.cryptography_service.decrypt(encrypted_content)
+                        data = json.loads(decrypted_json)
+                        logger.info("Data successfully decrypted")
+                    else:
+                        # Handle unencrypted data for backward compatibility
+                        logger.warning("Received unencrypted data (backward compatibility mode)")
+                        data = received_data
                     
                     # Get client IP
                     client_ip = client_address[0]
                     logger.info(f"Processing data from IP: {client_ip}")
                     
-                    # CRITICAL FIX: Add client IP to the data structure directly
+                    # Add client IP to the data structure directly
                     if "ApplicationInfo" not in data:
                         data["ApplicationInfo"] = {}
                     data["ApplicationInfo"]["client_ip"] = client_ip
@@ -109,19 +128,31 @@ class SocketConnectionHandler(IConnectionHandler):
                     # Process and store the credentials
                     result = self.processor.process_credentials(data, client_ip)
                     
-                    # Send acknowledgment back to the client
-                    response = {
+                    # Create response
+                    response_data = {
                         "status": "success",
                         "message": "Credentials received and stored successfully",
                         "document_id": result.get("document_id", "")
                     }
+                    
+                    # Encrypt the response
+                    response_json = json.dumps(response_data)
+                    encrypted_response = self.cryptography_service.encrypt(response_json)
+                    
+                    # Send encrypted response
+                    response = {
+                        "encrypted": True,
+                        "data": encrypted_response
+                    }
+                    
                     client_socket.sendall(json.dumps(response).encode('utf-8'))
                     
-                    logger.info(f"Successfully processed credentials from {client_address[0]}:{client_address[1]}")
+                    logger.info(f"Successfully processed encrypted credentials from {client_address[0]}:{client_address[1]}")
                 
                 except json.JSONDecodeError as e:
                     logger.error(f"Invalid JSON received from {client_address[0]}:{client_address[1]}: {e}")
                     error_response = {
+                        "encrypted": False,
                         "status": "error",
                         "message": "Invalid JSON format"
                     }
@@ -130,8 +161,9 @@ class SocketConnectionHandler(IConnectionHandler):
                 except Exception as e:
                     logger.error(f"Error processing data from {client_address[0]}:{client_address[1]}: {e}")
                     error_response = {
-                        "status": "error",
-                        "message": "Error processing credentials"
+                        "encrypted": False,
+                        "status": "error", 
+                        "message": f"Error processing credentials: {str(e)}"
                     }
                     client_socket.sendall(json.dumps(error_response).encode('utf-8'))
         

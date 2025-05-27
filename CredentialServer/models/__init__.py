@@ -1,3 +1,5 @@
+"""__init__.py"""
+
 """
 Data models used in the Credential Server.
 """

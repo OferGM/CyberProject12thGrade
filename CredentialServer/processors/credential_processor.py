@@ -1,3 +1,5 @@
+"""credential_processor.py"""
+
 from typing import Dict
 import logging
 import json

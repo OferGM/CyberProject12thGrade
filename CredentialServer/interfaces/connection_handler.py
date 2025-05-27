@@ -1,3 +1,5 @@
+"""connection_handler.py"""
+
 from abc import ABC, abstractmethod
 
 class IConnectionHandler(ABC):

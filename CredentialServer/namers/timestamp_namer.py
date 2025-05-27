@@ -1,3 +1,5 @@
+"""timestamp_namer.py"""
+
 import datetime
 from interfaces.document_namer import IDocumentNamer
 

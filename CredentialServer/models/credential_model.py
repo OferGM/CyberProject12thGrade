@@ -1,3 +1,5 @@
+"""credential_model.py"""
+
 from typing import Dict, List
 import datetime
 

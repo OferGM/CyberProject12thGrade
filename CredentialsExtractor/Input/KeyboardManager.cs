@@ -1,4 +1,4 @@
-﻿// KeyboardManager.cs - Updated implementation
+﻿// KeyboardManager.cs
 using System.Text;
 using CredentialsExtractor.Logging;
 

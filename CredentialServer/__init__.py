@@ -1,3 +1,5 @@
+"""__init__.py"""
+
 """
 Credential Server - A secure server for collecting and storing login credentials.
 """

@@ -1,3 +1,5 @@
+"""mongodb_repository"""
+
 import logging
 from typing import Dict, List
 import datetime

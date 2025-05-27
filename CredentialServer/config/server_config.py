@@ -1,3 +1,5 @@
+"""server_config.py"""
+
 import os
 import logging
 import configparser

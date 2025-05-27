@@ -1,3 +1,5 @@
+"""__init__.py"""
+
 """
 Interfaces defining the core abstractions for the Credential Server.
 """

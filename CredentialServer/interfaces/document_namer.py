@@ -1,3 +1,5 @@
+"""document_namer.py"""
+
 from abc import ABC, abstractmethod
 
 class IDocumentNamer(ABC):
